@@ -1,7 +1,11 @@
+import os
+import shutil
+
 import tensorflow as tf
 
 from tensorflow import keras
 from typing import Callable
+from pathlib import Path
 
 
 def run_model(
@@ -38,6 +42,43 @@ def run_model(
     return model.fit(
         train_ds,
         validation_data=valid_ds,
-        epochs=100,
+        epochs=4,
         batch_size=64,
         callbacks=[reduce_lr, model_checkpoint, tensor_board, early_stopping])
+
+
+def get_run_number(run_file: str) -> int:
+    RUN_FILES_PATH = os.path.join(
+        os.path.expanduser('~'),
+        f'.{run_file}')
+    run_file = Path(RUN_FILES_PATH)
+
+    run_file.parent.mkdir(exist_ok=True, parents=True)
+    run_file.touch(exist_ok=True)
+
+    text = run_file.read_text()
+
+    if len(text) > 0:
+        return int(text)
+
+    return 1
+
+
+def increment_run_number(run_file: str) -> None:
+    number = str(get_run_number(run_file) + 1)
+    file_path = Path(run_file)
+
+    file_path.write_text(number)
+
+
+def preserve_best_runs(source_name: str, dest_name: str) -> None:
+    source_dir = Path(source_name)
+    dest_dir = Path(dest_name)
+    all_folders = [d for d in source_dir.iterdir() if d.is_dir()]
+    sorted_folders = sorted(all_folders, key=lambda x: x.stat().st_ctime)
+
+    for folder in sorted_folders[-3:]:
+        shutil.copytree(folder, dest_dir / folder.name)
+
+    for folder in sorted_folders[:-3]:
+        shutil.rmtree(folder)

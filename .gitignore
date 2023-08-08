@@ -166,5 +166,6 @@ datasets/
 */images/*
 tensor_logs/
 untitled_project/
+tmp_models/
 models/
 histories/

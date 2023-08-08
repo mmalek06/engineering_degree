@@ -25,7 +25,7 @@ def plot_single_output_history(hist, outlier_threshold=None) -> None:
     plt.plot(np.where(train_loss_outliers)[0], train_loss[train_loss_outliers], 'ro', label='Outliers')
 
     for i, loss in zip(np.where(train_loss_outliers)[0], train_loss[train_loss_outliers]):
-        plt.text(i, loss, f'{loss:.2f}', color='red')
+        plt.text(i, 1, f'{loss:.2f}', color='red')
 
     plt.title('Loss Evolution')
     plt.xlabel('Epoch')
