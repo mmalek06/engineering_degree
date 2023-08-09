@@ -43,3 +43,25 @@ def get_runs_data(root_path: str) -> dict[str, int]:
         run_data[file_path] = run_number
 
     return run_data
+
+
+def estimate_etas(all_run_times: list[float], total_runs: int) -> (float, float):
+    estimated_run_time = _mean(all_run_times)
+    total_time_elapsed = sum(all_run_times)
+    estimated_total_time_required = total_runs * estimated_run_time
+    estimated_eta_seconds = estimated_total_time_required - total_time_elapsed
+    estimated_eta_minutes = estimated_eta_seconds / 60
+
+    return estimated_eta_seconds, estimated_eta_minutes
+
+
+def print_green(text: str) -> None:
+    print(f'\033[92m {text}\033[00m')
+
+
+def print_red(text: str) -> None:
+    print(f'\033[91m {text}\033[00m')
+
+
+def _mean(seq: list[float]) -> float:
+    return sum(seq) / len(seq)
