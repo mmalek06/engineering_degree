@@ -42,16 +42,21 @@ def run_model(
     return model.fit(
         train_ds,
         validation_data=valid_ds,
-        epochs=4,
+        epochs=1,
         batch_size=64,
         callbacks=[reduce_lr, model_checkpoint, tensor_board, early_stopping])
 
 
+def _get_runs_file_path(run_file: str) -> str:
+    return os.path\
+        .join(
+            os.path.expanduser('~'),
+            f'.{run_file}')
+
+
 def get_run_number(run_file: str) -> int:
-    RUN_FILES_PATH = os.path.join(
-        os.path.expanduser('~'),
-        f'.{run_file}')
-    run_file = Path(RUN_FILES_PATH)
+    run_files_path = _get_runs_file_path(run_file)
+    run_file = Path(run_files_path)
 
     run_file.parent.mkdir(exist_ok=True, parents=True)
     run_file.touch(exist_ok=True)
@@ -66,7 +71,8 @@ def get_run_number(run_file: str) -> int:
 
 def increment_run_number(run_file: str) -> None:
     number = str(get_run_number(run_file) + 1)
-    file_path = Path(run_file)
+    run_files_path = _get_runs_file_path(run_file)
+    file_path = Path(run_files_path)
 
     file_path.write_text(number)
 

@@ -6,7 +6,7 @@ import PIL.Image
 
 from tensorflow import keras
 
-from typing import Tuple
+from typing import Callable, Tuple
 
 SMALLER_WIDTH = 600 // 3
 SMALLER_HEIGHT = 450 // 3
@@ -77,3 +77,17 @@ def load_dataset(height: int, width: int, path: str, kind: str) -> tf.data.Datas
         label_mode='categorical',
         batch_size=32,
         image_size=(height, width))
+
+
+def prepare_train_dataset(ds: tf.data.Dataset, data_augmentation: Callable) -> tf.data.Dataset:
+    return ds \
+        .cache() \
+        .shuffle(1000) \
+        .map(lambda x, y: (data_augmentation(x), y)) \
+        .prefetch(buffer_size=tf.data.AUTOTUNE)
+
+
+def prepare_valid_dataset(ds: tf.data.Dataset) -> tf.data.Dataset:
+    return ds \
+        .cache() \
+        .prefetch(buffer_size=tf.data.AUTOTUNE)
