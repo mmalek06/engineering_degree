@@ -42,7 +42,7 @@ def run_model(
     return model.fit(
         train_ds,
         validation_data=valid_ds,
-        epochs=1,
+        epochs=100,
         batch_size=64,
         callbacks=[reduce_lr, model_checkpoint, tensor_board, early_stopping])
 
