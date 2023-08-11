@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_single_output_history(hist, outlier_threshold=None) -> None:
+def plot_single_output_history(hist, outlier_threshold=None, to_file: str = None) -> None:
     train_loss = np.array(hist['loss'])
     val_loss = np.array(hist['val_loss'])
 
@@ -42,6 +42,10 @@ def plot_single_output_history(hist, outlier_threshold=None) -> None:
     plt.legend()
 
     plt.tight_layout()
+
+    if to_file is not None:
+        plt.savefig(to_file, bbox_inches='tight')
+
     plt.show()
 
 

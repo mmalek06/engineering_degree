@@ -7,8 +7,11 @@ from tensorflow import keras
 from typing import Callable
 from pathlib import Path
 
+from functions.plotting import plot_single_output_history
+from functions.loading_data import load_dataset, prepare_train_dataset, prepare_valid_dataset
 
-def run_model(
+
+def fit_model(
         train_ds: tf.data.Dataset,
         valid_ds: tf.data.Dataset,
         model_factory: Callable,
@@ -91,3 +94,43 @@ def preserve_best_runs(source_name: str, dest_name: str) -> None:
 
     for folder in sorted_folders:
         shutil.rmtree(folder)
+
+
+def finalize_run(root: str, plot_name: str, model_name: str, history: any) -> None:
+    plot_path = os.path.join(root, 'plots', plot_name)
+
+    increment_run_number(model_name)
+    preserve_best_runs(
+        os.path.join(root, 'tmp_models'),
+        os.path.join(root, 'models'))
+    plot_single_output_history(history.history, to_file=plot_path)
+
+
+def run_model(
+        root: str,
+        height: int,
+        width: int,
+        data_dir: str,
+        model_base_name: str,
+        model_getter: Callable,
+        augmentation_getter: Callable) -> None:
+    train_dataset = load_dataset(width, height, data_dir, 'training')
+    valid_dataset = load_dataset(width, height, data_dir, 'validation')
+    num_classes = len(train_dataset.class_names)
+    run_number = get_run_number(model_base_name)
+    data_augmentation = augmentation_getter()
+    train_dataset = prepare_train_dataset(train_dataset, data_augmentation)
+    valid_dataset = prepare_valid_dataset(valid_dataset)
+    model_name = f'{model_base_name}_{run_number}'
+    history = fit_model(
+        train_dataset,
+        valid_dataset,
+        model_getter(num_classes),
+        os.path.join(root, 'tmp_models', model_name + '_{epoch}'),
+        os.path.join(root, 'tensor_logs', model_name),
+        monitor='val_loss',
+        reduction_patience=10,
+        stopping_patience=20)
+    plot_name = f'{model_base_name}_{run_number}.pdf'
+
+    finalize_run(root, plot_name, model_base_name, history)

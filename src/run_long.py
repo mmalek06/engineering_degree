@@ -31,11 +31,10 @@ for notebook_path, run in runs_data.items():
             print_red('Exit file encountered, aborting...')
             sys.exit(0)
 
-        print_green(f'Run {current_run} out of {total_runs}...')
-
         start_time = time.time()
 
-        print_green(f'Running {notebook_path} for the {current_run} time.')
+        print_green(f'Run {current_run} out of {total_runs}...')
+        print_green(f'Running {notebook_path}.')
         subprocess.run(f'jupyter nbconvert --execute --to notebook --inplace {notebook_path}', shell=True)
 
         end_time = time.time()
