@@ -17,7 +17,7 @@ def run_model(
         reduction_patience: int = 5,
         monitor: str = 'val_accuracy',
         mode: str = 'max',
-        stopping_patience: int = 10):
+        stopping_patience: int = 15):
     MIN_DELTA = .001
     early_stopping = keras.callbacks.EarlyStopping(
         monitor=monitor,
@@ -84,7 +84,10 @@ def preserve_best_runs(source_name: str, dest_name: str) -> None:
     sorted_folders = sorted(all_folders, key=lambda x: x.stat().st_ctime)
 
     for folder in sorted_folders[-3:]:
-        shutil.copytree(folder, dest_dir / folder.name)
+        try:
+            shutil.copytree(folder, dest_dir / folder.name)
+        except FileExistsError:
+            pass
 
-    for folder in sorted_folders[:-3]:
+    for folder in sorted_folders:
         shutil.rmtree(folder)

@@ -18,8 +18,8 @@ how_many_runs = int(arguments['runs'])
 exit_file = arguments['exitfile']
 root_path = os.path.join('classifiers', 'pretrained_models', model_type)
 runs_data = get_runs_data(root_path)
-total_runs = sum([(how_many_runs + 1) - run for run in runs_data.values()])
-current_run = 1
+total_runs = len(runs_data) * how_many_runs
+current_run = sum([run - 1 for run in runs_data.values()]) + 1
 all_run_times = []
 
 for notebook_path, run in runs_data.items():
@@ -35,7 +35,7 @@ for notebook_path, run in runs_data.items():
 
         start_time = time.time()
 
-        print_green(f'Running {notebook_path} for the {run} time.')
+        print_green(f'Running {notebook_path} for the {current_run} time.')
         subprocess.run(f'jupyter nbconvert --execute --to notebook --inplace {notebook_path}', shell=True)
 
         end_time = time.time()
