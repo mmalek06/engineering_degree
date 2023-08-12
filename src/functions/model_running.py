@@ -20,7 +20,7 @@ def fit_model(
         reduction_patience: int = 5,
         monitor: str = 'val_accuracy',
         mode: str = 'max',
-        stopping_patience: int = 15):
+        stopping_patience: int = 10):
     MIN_DELTA = .001
     early_stopping = keras.callbacks.EarlyStopping(
         monitor=monitor,
@@ -38,6 +38,7 @@ def fit_model(
     model_checkpoint = keras.callbacks.ModelCheckpoint(
         filepath=checkpoint_path,
         monitor=monitor,
+        mode=mode,
         save_best_only=True)
     tensor_board = keras.callbacks.TensorBoard(log_dir=log_path)
     model = model_factory()
@@ -129,8 +130,9 @@ def run_model(
         os.path.join(root, 'tmp_models', model_name + '_{epoch}'),
         os.path.join(root, 'tensor_logs', model_name),
         monitor='val_loss',
+        mode='min',
         reduction_patience=10,
         stopping_patience=20)
-    plot_name = f'{model_base_name}_{run_number}.pdf'
+    plot_name = f'{model_name}.pdf'
 
     finalize_run(root, plot_name, model_base_name, history)

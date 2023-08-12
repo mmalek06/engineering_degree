@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from scipy.stats import norm
+from matplotlib.ticker import MaxNLocator
+
 
 def plot_single_output_history(hist, outlier_threshold=None, to_file: str = None) -> None:
     train_loss = np.array(hist['loss'])
@@ -76,4 +79,29 @@ def plot_multi_output_history(
     plt.legend()
 
     plt.tight_layout()
+    plt.show()
+
+
+def plot_histograms(data: list[float], title: str, x_label: str, to_file: str = None) -> None:
+    lim_from, lim_to = .7, 1
+    bins = np.arange(0.85, 1.01, 0.01)
+    counts, bin_edges = np.histogram(data, bins=bins)
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+    mu, std = np.mean(data), np.std(data)
+    x = np.linspace(lim_from, lim_to, 1000)
+    y = norm.pdf(x, mu, std) * len(data) * (bins[1] - bins[0])
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    ax.bar(bin_centers, counts, width=0.01, alpha=0.5, align='center', edgecolor='black', label=f'{x_label} Frequencies')
+    ax.plot(x, y, 'r-', lw=2, label='Gaussian Distribution')
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel('Frequency')
+    ax.legend()
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_xlim(lim_from, lim_to)
+
+    if to_file is not None:
+        plt.savefig(to_file, bbox_inches='tight')
+
     plt.show()
