@@ -97,13 +97,21 @@ def preserve_best_runs(source_name: str, dest_name: str) -> None:
         shutil.rmtree(folder)
 
 
-def finalize_run(root: str, plot_name: str, model_name: str, history: any) -> None:
-    plot_path = os.path.join(root, 'plots', plot_name)
+def finalize_run(root: str, plot_name: str, model_name: str, dataset_name: str, history: any) -> None:
+    plots_path = os.path.join(root, 'plots', dataset_name)
+    models_path = os.path.join(root, 'models', dataset_name)
+
+    if not os.path.exists(plots_path):
+        os.makedirs(plots_path)
+    if not os.path.exists(models_path):
+        os.makedirs(models_path)
+
+    plot_path = os.path.join(plots_path, plot_name)
 
     increment_run_number(model_name)
     preserve_best_runs(
         os.path.join(root, 'tmp_models'),
-        os.path.join(root, 'models'))
+        models_path)
     plot_single_output_history(history.history, to_file=plot_path)
 
 
@@ -112,6 +120,7 @@ def run_model(
         height: int,
         width: int,
         data_dir: str,
+        dataset_name: str,
         model_base_name: str,
         model_getter: Callable,
         augmentation_getter: Callable) -> None:
@@ -123,16 +132,21 @@ def run_model(
     train_dataset = prepare_train_dataset(train_dataset, data_augmentation)
     valid_dataset = prepare_valid_dataset(valid_dataset)
     model_name = f'{model_base_name}_{run_number}'
+    logs_path = os.path.join(root, 'tensor_logs', dataset_name)
+
+    if not os.path.exists(logs_path):
+        os.makedirs(logs_path)
+
     history = fit_model(
         train_dataset,
         valid_dataset,
         model_getter(num_classes),
         os.path.join(root, 'tmp_models', model_name + '_{epoch}'),
-        os.path.join(root, 'tensor_logs', model_name),
+        os.path.join(logs_path, model_name),
         monitor='val_loss',
         mode='min',
         reduction_patience=10,
         stopping_patience=20)
     plot_name = f'{model_name}.pdf'
 
-    finalize_run(root, plot_name, model_base_name, history)
+    finalize_run(root, plot_name, model_base_name, dataset_name, history)

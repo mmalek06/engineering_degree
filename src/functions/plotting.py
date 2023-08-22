@@ -105,3 +105,31 @@ def plot_histograms(data: list[float], title: str, x_label: str, to_file: str = 
         plt.savefig(to_file, bbox_inches='tight')
 
     plt.show()
+
+
+def _rescale_to_0_255(img: np.ndarray) -> np.ndarray:
+    img_min, img_max = img.min(), img.max()
+
+    return (255 * (img - img_min) / (img_max - img_min)).astype(np.uint8)
+
+
+def plot_images(original, centered):
+    n = original.shape[0]
+
+    plt.figure(figsize=(10, 5 * n))
+
+    for i in range(n):
+        plt.subplot(n, 2, i*2 + 1)
+        plt.imshow(np.squeeze(original[i].astype('uint8')))
+        plt.title('Original Image')
+        plt.axis('off')
+
+        rescaled_centered = _rescale_to_0_255(centered[i].numpy())
+
+        plt.subplot(n, 2, i*2 + 2)
+        plt.imshow(np.squeeze(rescaled_centered))
+        plt.title('Augmented Image')
+        plt.axis('off')
+
+    plt.tight_layout()
+    plt.show()
