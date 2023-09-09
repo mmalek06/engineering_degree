@@ -133,3 +133,57 @@ def plot_images(original, centered):
 
     plt.tight_layout()
     plt.show()
+
+
+def plot_bars(data_dict: dict[str, float], title: str, xlabel: str, ylabel: str, filename: str) -> None:
+    keys = list(data_dict.keys())
+    values = list(data_dict.values())
+
+    plt.figure(figsize=(10, 6))
+
+    bars = plt.bar(keys, values, color='blue')
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+
+    for bar in bars:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2, yval - 0.02, round(yval, 2), ha='center', va='bottom', color='white')
+
+    plt.savefig(filename)
+    plt.show()
+
+
+def plot_bar_from_dict(data_dict: dict[str, float], title: str, xlabel: str, ylabel: str, filename: str, show=False) -> None:
+    data_dict = {k: v for k, v in sorted(data_dict.items(), key=lambda item: item[1])}
+    keys = list(data_dict.keys())
+    values = list(data_dict.values())
+
+    plt.figure(figsize=(14, len(keys) * .5))
+    plt.gca().set_facecolor('black')
+
+    bars = plt.barh(keys, values, color='blue')
+
+    plt.xlabel(ylabel, color='white')
+    plt.ylabel(xlabel, color='white')
+    plt.title(title, color='white')
+    plt.xticks(color='white')
+    plt.yticks(color='white')
+
+    for bar in bars:
+        plt.text(
+            bar.get_width(),
+            bar.get_y() + bar.get_height()/2.0,
+            round(bar.get_width(), 6),
+            ha='center',
+            va='center',
+            color='white',
+            fontsize=10)
+
+    plt.subplots_adjust(left=0.25, right=0.95, top=0.98, bottom=0.02)
+    plt.tight_layout()
+    plt.savefig(filename, facecolor='black')
+
+    if show:
+        plt.show()
