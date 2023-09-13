@@ -68,14 +68,14 @@ def get_name(path: str) -> str:
         .split('.')[-2])
 
 
-def load_dataset(height: int, width: int, path: str, kind: str) -> tf.data.Dataset:
+def load_dataset(height: int, width: int, path: str, kind: str, batch_size=32) -> tf.data.Dataset:
     directory = os.path.join(path, kind)
 
     return keras.utils.image_dataset_from_directory(
         directory=directory,
         labels='inferred',
         label_mode='categorical',
-        batch_size=32,
+        batch_size=batch_size,
         image_size=(height, width))
 
 

@@ -8,14 +8,15 @@ Different phases of work require different code, so I've splitted them into fold
 2. Establishing simple, baseline model - KNN, XGBoost?
 3. Justifying the use of InceptionResNetV2 architecture as the basic choice while describing the history and architecture
 4. Ignoring the dataset imbalance, searching for a non-tuned model able to beat the baseline
-5. Acting on the imbalance, trying to apply techniques covered here: https://www.tensorflow.org/tutorials/structured_data/imbalanced_data
-6. After optimal Inception model found, move to EfficientNet, again describing history, architecture
-7. Find a ROI detection net to find ROIs on new images. Use it for the testing part:
+5. Establishing which one of the so far trained models is the best one
+6. Acting on the imbalance, trying to apply techniques covered here: https://www.tensorflow.org/tutorials/structured_data/imbalanced_data
+7. After optimal Inception model found, move to EfficientNet, again describing history, architecture
+8. Find a ROI detection net to find ROIs on new images. Use it for the testing part:
    - feed it new images, let it find a ROI
    - cut out the interesting part based on ROI - it should be done with some margins
    - pass the cut-out ROI image to the EfficientNet for classification
-8. Creating an Azure-based web api that will demonstrate how the trained networks could be used
-9. Hypothesizing on further model improvements:
+9. Creating an Azure-based web api that will demonstrate how the trained networks could be used
+10. Hypothesizing on further model improvements:
    - adding another model consisting of Dense layers - one that would analyze survey responses
    - merging both models, then doing the predictions
 
@@ -44,8 +45,9 @@ Different phases of work require different code, so I've splitted them into fold
 2. done
 3. todo
 4. done
-5. todo
+5. done
 6. todo
-7. done - needs reiteration
-8. todo
+7. todo
+8. done - needs reiteration
 9. todo
+10. todo

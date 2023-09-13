@@ -66,7 +66,13 @@ def get_model_partly_frozen(height: int, width: int, num_classes: int, biases='z
     return model
 
 
-def get_model_with_attention(height: int, width: int, num_classes: int, freezer: Callable = None, biases='zeros') -> keras.Model:
+def get_model_with_attention(
+        height: int,
+        width: int,
+        num_classes: int,
+        freezer: Callable = None,
+        biases='zeros',
+        metrics: list = None) -> keras.Model:
     def get_attention_module(prev: keras.layers.Layer) -> keras.layers.Layer:
         gap_layer = keras.layers.GlobalAveragePooling2D()(prev)
         gap_layer_res = keras.layers.Reshape((1, 1, 1536))(gap_layer)
@@ -83,6 +89,8 @@ def get_model_with_attention(height: int, width: int, num_classes: int, freezer:
 
     if freezer is not None:
         freezer(base_model)
+    if metrics is None:
+        metrics = ['accuracy']
 
     attention_module = get_attention_module(base_model.output)
     flat = keras.layers.Flatten()(attention_module)
@@ -97,6 +105,6 @@ def get_model_with_attention(height: int, width: int, num_classes: int, freezer:
     model.compile(
         optimizer='adam',
         loss='categorical_crossentropy',
-        metrics=['accuracy'])
+        metrics=metrics)
 
     return model

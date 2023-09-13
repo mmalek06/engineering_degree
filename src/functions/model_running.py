@@ -123,9 +123,10 @@ def run_model(
         dataset_name: str,
         model_base_name: str,
         model_getter: Callable,
-        augmentation_getter: Callable) -> None:
-    train_dataset = load_dataset(width, height, data_dir, 'training')
-    valid_dataset = load_dataset(width, height, data_dir, 'validation')
+        augmentation_getter: Callable,
+        batch_size: int = 32) -> None:
+    train_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
+    valid_dataset = load_dataset(width, height, data_dir, 'validation', batch_size)
     num_classes = len(train_dataset.class_names)
     run_number = get_run_number(model_base_name)
     data_augmentation = augmentation_getter()
