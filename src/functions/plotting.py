@@ -25,16 +25,17 @@ def plot_single_output_history(hist, outlier_threshold=None, to_file: str = None
     plt.plot(train_loss_line, label='Train Loss')
     plt.plot(val_loss_line, label='Validation Loss')
 
-    plt.plot(np.where(train_loss_outliers)[0], train_loss[train_loss_outliers], 'ro', label='Outliers')
+    plt.plot(np.where(train_loss_outliers)[0], [outlier_threshold]*np.sum(train_loss_outliers), 'ro', label='Outliers')
 
-    for i, loss in zip(np.where(train_loss_outliers)[0], train_loss[train_loss_outliers]):
-        plt.text(i, loss, f'{loss:.2f}', color='red')
+    for i in np.where(train_loss_outliers)[0]:
+        plt.text(i, outlier_threshold, f'{train_loss[i]:.2f}', color='red')
 
     plt.title('Loss Evolution')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.grid(True)
     plt.legend()
+
     plt.subplot(1, 2, 2)
     plt.plot(hist['accuracy'], label='Train accuracy')
     plt.plot(hist['val_accuracy'], label='Validation accuracy')
@@ -155,7 +156,13 @@ def plot_bars(data_dict: dict[str, float], title: str, xlabel: str, ylabel: str,
     plt.show()
 
 
-def plot_bar_from_dict(data_dict: dict[str, float], title: str, xlabel: str, ylabel: str, filename: str, show=False) -> None:
+def plot_bar_from_dict(
+        data_dict: dict[str, float],
+        title: str,
+        xlabel: str,
+        ylabel: str,
+        filename: str,
+        show=False) -> None:
     data_dict = {k: v for k, v in sorted(data_dict.items(), key=lambda item: item[1])}
     keys = list(data_dict.keys())
     values = list(data_dict.values())

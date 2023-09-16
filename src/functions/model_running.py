@@ -20,7 +20,9 @@ def fit_model(
         reduction_patience: int = 5,
         monitor: str = 'val_accuracy',
         mode: str = 'max',
-        stopping_patience: int = 10):
+        stopping_patience: int = 10,
+        steps_per_epoch: int = None,
+        epochs: int = None):
     MIN_DELTA = .001
     early_stopping = keras.callbacks.EarlyStopping(
         monitor=monitor,
@@ -46,9 +48,9 @@ def fit_model(
     return model.fit(
         train_ds,
         validation_data=valid_ds,
-        epochs=100,
-        batch_size=64,
-        callbacks=[reduce_lr, model_checkpoint, tensor_board, early_stopping])
+        epochs=epochs,
+        steps_per_epoch=steps_per_epoch,
+        callbacks=[reduce_lr, model_checkpoint, tensor_board, early_stopping]), model
 
 
 def _get_runs_file_path(run_file: str) -> str:
@@ -124,10 +126,19 @@ def run_model(
         model_base_name: str,
         model_getter: Callable,
         augmentation_getter: Callable,
-        batch_size: int = 32) -> None:
-    train_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
+        batch_size: int = 32,
+        stopping_patience: int = 20,
+        train_dataset: tf.data.Dataset = None,
+        steps_per_epoch: int = None,
+        epochs: int = 100) -> (keras.Model, any):
+    if train_dataset is None:
+        train_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
+        num_classes = len(train_dataset.class_names)
+    else:
+        tmp_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
+        num_classes = len(tmp_dataset.class_names)
+
     valid_dataset = load_dataset(width, height, data_dir, 'validation', batch_size)
-    num_classes = len(train_dataset.class_names)
     run_number = get_run_number(model_base_name)
     data_augmentation = augmentation_getter()
     train_dataset = prepare_train_dataset(train_dataset, data_augmentation)
@@ -138,7 +149,7 @@ def run_model(
     if not os.path.exists(logs_path):
         os.makedirs(logs_path)
 
-    history = fit_model(
+    history, model = fit_model(
         train_dataset,
         valid_dataset,
         model_getter(num_classes),
@@ -147,7 +158,11 @@ def run_model(
         monitor='val_loss',
         mode='min',
         reduction_patience=10,
-        stopping_patience=20)
+        stopping_patience=stopping_patience,
+        steps_per_epoch=steps_per_epoch,
+        epochs=epochs)
     plot_name = f'{model_name}.pdf'
 
     finalize_run(root, plot_name, model_base_name, dataset_name, history)
+
+    return model, history

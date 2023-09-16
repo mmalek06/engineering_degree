@@ -36,6 +36,10 @@ def get_runs_data(root_path: str) -> dict[str, int]:
 
     for file in files:
         file_path = os.path.join(root_path, file)
+
+        if os.path.isdir(file_path):
+            continue
+
         file_base_name = file.split('.')[0]
         run_file_name = f'{category}_{file_base_name}'
         run_number = get_run_number(run_file_name)
