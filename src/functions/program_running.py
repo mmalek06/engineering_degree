@@ -13,6 +13,7 @@ def get_arguments() -> dict[str, str]:
     parser.add_argument('--runs', help='How many times each notebook should be run.')
     parser.add_argument('--exitfile', help='Program will look for this file in the user folder and if it\'s present, '
                                            'it will terminate after the current notebook processing completes.')
+    parser.add_argument('--model', help='One model that will be run. An optional argument.')
 
     args = parser.parse_args()
     arg_dict = vars(args)

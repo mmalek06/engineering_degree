@@ -16,8 +16,13 @@ arguments = get_arguments()
 model_type = arguments['type']
 how_many_runs = int(arguments['runs'])
 exit_file = arguments['exitfile']
+chosen_model = arguments.get('model')
 root_path = os.path.join('classifiers', 'pretrained_models', model_type)
 runs_data = get_runs_data(root_path)
+
+if chosen_model is not None:
+    runs_data = dict(filter(lambda pair: chosen_model in pair[0], runs_data.items()))
+
 total_runs = len(runs_data) * how_many_runs
 current_run = sum([run - 1 for run in runs_data.values()]) + 1
 all_run_times = []
