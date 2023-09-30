@@ -10,30 +10,18 @@ def get_basic_model(height: int, width: int, num_classes: int, metrics=None, bia
         weights='imagenet',
         input_shape=(height, width, 3))
     flat = keras.layers.Flatten()(base_model.output)
-    locator_module = keras.layers.Dense(2048, activation='relu')(flat)
-    locator_module = keras.layers.Dropout(.3)(locator_module)
-    locator_module = keras.layers.Dense(
+    classifier_module = keras.layers.Dense(2048, activation='relu')(flat)
+    classifier_module = keras.layers.Dropout(.3)(classifier_module)
+    classifier_module = keras.layers.Dense(
         num_classes,
         activation='softmax',
-        bias_initializer=biases)(locator_module)
-    model = keras.Model(base_model.input, outputs=locator_module)
+        bias_initializer=biases)(classifier_module)
+    model = keras.Model(base_model.input, outputs=classifier_module)
 
     model.compile(
         optimizer='adam',
         loss='categorical_crossentropy',
-        metrics=['accuracy'] if metrics is None else [
-            keras.metrics.CategoricalCrossentropy(name='cross entropy'),
-            keras.metrics.MeanSquaredError(name='Brier score'),
-            keras.metrics.TruePositives(name='tp'),
-            keras.metrics.FalsePositives(name='fp'),
-            keras.metrics.TrueNegatives(name='tn'),
-            keras.metrics.FalseNegatives(name='fn'),
-            keras.metrics.BinaryAccuracy(name='accuracy'),
-            keras.metrics.Precision(name='precision'),
-            keras.metrics.Recall(name='recall'),
-            keras.metrics.AUC(name='auc'),
-            keras.metrics.AUC(name='prc', curve='PR')
-        ])
+        metrics=['accuracy'] if metrics is None else metrics)
 
     return model
 

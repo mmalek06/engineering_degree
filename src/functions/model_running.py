@@ -83,13 +83,13 @@ def increment_run_number(run_file: str) -> None:
     file_path.write_text(number)
 
 
-def preserve_best_runs(source_name: str, dest_name: str) -> None:
+def preserve_best_runs(source_name: str, dest_name: str, preserve_num: int) -> None:
     source_dir = Path(source_name)
     dest_dir = Path(dest_name)
     all_folders = [d for d in source_dir.iterdir() if d.is_dir()]
     sorted_folders = sorted(all_folders, key=lambda x: x.stat().st_ctime)
 
-    for folder in sorted_folders[-3:]:
+    for folder in sorted_folders[-preserve_num:]:
         try:
             shutil.copytree(folder, dest_dir / folder.name)
         except FileExistsError:
@@ -113,7 +113,8 @@ def finalize_run(root: str, plot_name: str, model_name: str, dataset_name: str, 
     increment_run_number(model_name)
     preserve_best_runs(
         os.path.join(root, 'tmp_models'),
-        models_path)
+        models_path,
+        1)
     plot_single_output_history(history.history, to_file=plot_path)
 
 
