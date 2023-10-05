@@ -22,7 +22,8 @@ def fit_model(
         mode: str = 'max',
         stopping_patience: int = 10,
         steps_per_epoch: int = None,
-        epochs: int = None):
+        epochs: int = None,
+        class_weight: dict[int, float] = None):
     MIN_DELTA = .001
     early_stopping = keras.callbacks.EarlyStopping(
         monitor=monitor,
@@ -50,6 +51,7 @@ def fit_model(
         validation_data=valid_ds,
         epochs=epochs,
         steps_per_epoch=steps_per_epoch,
+        class_weight=class_weight,
         callbacks=[reduce_lr, model_checkpoint, tensor_board, early_stopping]), model
 
 
@@ -127,17 +129,16 @@ def run_model(
         model_base_name: str,
         model_getter: Callable,
         augmentation_getter: Callable,
+        num_classes: int,
         batch_size: int = 32,
         stopping_patience: int = 20,
         train_dataset: tf.data.Dataset = None,
         steps_per_epoch: int = None,
-        epochs: int = 100) -> (keras.Model, any):
+        epochs: int = 100,
+        class_weight: dict[int, float] = None) -> (keras.Model, any):
     if train_dataset is None:
         train_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
         num_classes = len(train_dataset.class_names)
-    else:
-        tmp_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
-        num_classes = len(tmp_dataset.class_names)
 
     valid_dataset = load_dataset(width, height, data_dir, 'validation', batch_size)
     run_number = get_run_number(model_base_name)
@@ -161,7 +162,8 @@ def run_model(
         reduction_patience=10,
         stopping_patience=stopping_patience,
         steps_per_epoch=steps_per_epoch,
-        epochs=epochs)
+        epochs=epochs,
+        class_weight=class_weight)
     plot_name = f'{model_name}.pdf'
 
     finalize_run(root, plot_name, model_base_name, dataset_name, history)

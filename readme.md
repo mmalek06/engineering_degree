@@ -5,7 +5,7 @@ Different phases of work require different code, so I've splitted them into fold
 <h4>Attack plan</h4>
 
 1. EDA
-2. Establishing simple, baseline model - KNN, XGBoost?
+2. Establishing simple, baseline model - random assignment, linear classifier, KNN, XGBoost?
 3. Justifying the use of InceptionResNetV2 architecture as the basic choice while describing the history and architecture
 4. Ignoring the dataset imbalance, searching for a non-tuned model able to beat the baseline
 5. Establishing which one of the so far trained models is the best one
@@ -42,7 +42,7 @@ Different phases of work require different code, so I've splitted them into fold
 
 <h4>Checklist</h4>
 
-1. done
+1. done - needs reiteration
 2. done
 3. todo
 4. done

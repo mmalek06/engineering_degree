@@ -79,10 +79,20 @@ def load_dataset(height: int, width: int, path: str, kind: str, batch_size=32) -
         image_size=(height, width))
 
 
-def load_rebalanced_dataset(height: int, width: int, path: str, kind: str, batch_size=32) -> tf.data.Dataset:
+def load_rebalanced_dataset(
+        height: int,
+        width: int,
+        path: str,
+        kind: str,
+        batch_size=32,
+        do_repeat: bool = True) -> (tf.data.Dataset, list[str]):
     dataset = load_dataset(height, width, path, kind, batch_size)
     classes = dataset.class_names
-    dataset = dataset.shuffle(1024).repeat()
+    dataset = dataset.shuffle(128)
+
+    if do_repeat:
+        dataset = dataset.repeat()
+
     num_classes = len(classes)
     class_datasets = []
 
@@ -91,7 +101,7 @@ def load_rebalanced_dataset(height: int, width: int, path: str, kind: str, batch
 
     balanced_ds = tf.data.Dataset.sample_from_datasets(class_datasets, [1.0 / num_classes] * num_classes)
 
-    return balanced_ds
+    return balanced_ds, classes
 
 
 def prepare_train_dataset(ds: tf.data.Dataset, data_augmentation: Callable) -> tf.data.Dataset:

@@ -10,7 +10,7 @@ def get_basic_model(height: int, width: int, num_classes: int, metrics=None, bia
         pooling=None,
         classes=num_classes)
     flat = keras.layers.Flatten()(base_model.output)
-    classifier_module = keras.layers.Dense(2048, activation='relu')(flat)
+    classifier_module = keras.layers.Dense(256, activation='relu')(flat)
     classifier_module = keras.layers.Dropout(.3)(classifier_module)
     classifier_module = keras.layers.Dense(
         num_classes,
