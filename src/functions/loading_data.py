@@ -40,9 +40,9 @@ def load_and_preprocess_data(csv_file_path: str, img_dir: str) -> tf.data.Datase
 
     return tf.data.Dataset \
         .from_tensor_slices((
-            image_filenames,
-            coordinates,
-            np.zeros((coordinates.shape[0],)))) \
+        image_filenames,
+        coordinates,
+        np.zeros((coordinates.shape[0],)))) \
         .map(process_path) \
         .batch(64) \
         .map(lambda img, coords, dots: (img, {'root': coords, 'dot': dots})) \
@@ -77,31 +77,6 @@ def load_dataset(height: int, width: int, path: str, kind: str, batch_size=32) -
         label_mode='categorical',
         batch_size=batch_size,
         image_size=(height, width))
-
-
-def load_rebalanced_dataset(
-        height: int,
-        width: int,
-        path: str,
-        kind: str,
-        batch_size=32,
-        do_repeat: bool = True) -> (tf.data.Dataset, list[str]):
-    dataset = load_dataset(height, width, path, kind, batch_size)
-    classes = dataset.class_names
-    dataset = dataset.shuffle(128)
-
-    if do_repeat:
-        dataset = dataset.repeat()
-
-    num_classes = len(classes)
-    class_datasets = []
-
-    for class_idx in range(num_classes):
-        class_datasets.append(dataset.filter(lambda x, y: tf.reduce_any(tf.equal(tf.argmax(y, axis=-1), class_idx))))
-
-    balanced_ds = tf.data.Dataset.sample_from_datasets(class_datasets, [1.0 / num_classes] * num_classes)
-
-    return balanced_ds, classes
 
 
 def prepare_train_dataset(ds: tf.data.Dataset, data_augmentation: Callable) -> tf.data.Dataset:

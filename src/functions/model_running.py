@@ -129,7 +129,6 @@ def run_model(
         model_base_name: str,
         model_getter: Callable,
         augmentation_getter: Callable,
-        num_classes: int,
         batch_size: int = 32,
         stopping_patience: int = 20,
         train_dataset: tf.data.Dataset = None,
@@ -138,8 +137,8 @@ def run_model(
         class_weight: dict[int, float] = None) -> (keras.Model, any):
     if train_dataset is None:
         train_dataset = load_dataset(width, height, data_dir, 'training', batch_size)
-        num_classes = len(train_dataset.class_names)
 
+    num_classes = len(train_dataset.class_names)
     valid_dataset = load_dataset(width, height, data_dir, 'validation', batch_size)
     run_number = get_run_number(model_base_name)
     data_augmentation = augmentation_getter()
