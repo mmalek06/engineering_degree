@@ -1,0 +1,3 @@
+1. opis historyczny - zawiera opis poszczególnych warstw - Dense, Conv itp
+2. opis narzędzia - komputer, środowisko, jakie biblioteki
+3. opis rozwiązania - praca porównawcza, hipotezy czemu jaki model w dany sposób się zachował

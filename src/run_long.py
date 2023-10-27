@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import time
+import pprint
 
 from functions.program_running import \
     estimate_etas, \
@@ -20,6 +21,8 @@ chosen_model = arguments.get('model')
 root_path = os.path.join('classifiers', 'pretrained_models', model_type)
 runs_data = get_runs_data(root_path)
 
+pprint.pprint(runs_data)
+
 if chosen_model is not None:
     runs_data = dict(filter(lambda pair: chosen_model in pair[0], runs_data.items()))
 
@@ -28,7 +31,7 @@ current_run = sum([run - 1 for run in runs_data.values()]) + 1
 all_run_times = []
 
 for notebook_path, run in runs_data.items():
-    if run >= how_many_runs:
+    if run >= how_many_runs + 1:
         continue
 
     for _ in range(how_many_runs - run + 1):
