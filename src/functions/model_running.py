@@ -7,7 +7,7 @@ from tensorflow import keras
 from typing import Callable
 from pathlib import Path
 
-from functions.plotting import plot_single_output_history
+from functions.plotting import plot_single_output_history, plot_multi_output_history
 from functions.loading_data import load_dataset, prepare_train_dataset, prepare_valid_dataset
 
 
@@ -101,7 +101,8 @@ def preserve_best_runs(source_name: str, dest_name: str, preserve_num: int) -> N
         shutil.rmtree(folder)
 
 
-def finalize_run(root: str, plot_name: str, model_name: str, dataset_name: str, history: any) -> None:
+def finalize_run(root: str, plot_name: str, model_name: str, dataset_name: str, history: any,
+                 plot_mode: str = 'single') -> None:
     plots_path = os.path.join(root, 'plots', dataset_name)
     models_path = os.path.join(root, 'models', dataset_name)
 
@@ -117,7 +118,11 @@ def finalize_run(root: str, plot_name: str, model_name: str, dataset_name: str, 
         os.path.join(root, 'tmp_models'),
         models_path,
         1)
-    plot_single_output_history(history.history, to_file=plot_path)
+
+    if plot_mode == 'single':
+        plot_single_output_history(history.history, to_file=plot_path)
+    elif plot_mode == 'multiple':
+        plot_multi_output_history(history, to_file=plot_path)
 
 
 def run_model(

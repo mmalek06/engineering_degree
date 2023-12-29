@@ -18,7 +18,7 @@ model_type = arguments['type']
 how_many_runs = int(arguments['runs'])
 exit_file = arguments['exitfile']
 chosen_model = arguments.get('model')
-root_path = os.path.join('classifiers', 'pretrained_models', model_type)
+root_path = os.path.join('roi', 'custom_models', model_type)
 runs_data = get_runs_data(root_path)
 
 pprint.pprint(runs_data)

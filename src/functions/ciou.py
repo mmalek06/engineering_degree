@@ -11,8 +11,8 @@ def ciou_loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     ciou_loss -- scalar loss, tensor of shape ()
     """
     epsilon = 1e-3
-    true_y1, true_x1, true_y2, true_x2 = tf.split(y_true, 4, axis = -1)
-    pred_y1, pred_x1, pred_y2, pred_x2 = tf.split(y_pred, 4, axis = -1)
+    true_y1, true_x1, true_y2, true_x2 = tf.split(y_true, 4, axis=-1)
+    pred_y1, pred_x1, pred_y2, pred_x2 = tf.split(y_pred, 4, axis=-1)
     # intersection calculation:
     # take leftmost x coord and rightmost x coord, subtract to get the width and limit with
     # 0 to avoid negative values, do the same with ys
