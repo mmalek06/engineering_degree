@@ -24,6 +24,7 @@ runs_data = get_runs_data(root_path)
 pprint.pprint(runs_data)
 
 if chosen_model is not None:
+    # noinspection PyTypeChecker
     runs_data = dict(filter(lambda pair: chosen_model in pair[0], runs_data.items()))
 
 total_runs = len(runs_data) * how_many_runs
