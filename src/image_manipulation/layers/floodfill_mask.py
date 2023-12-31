@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 
 
+# noinspection PyTypeChecker
 def generate_mask(img: np.ndarray) -> np.ndarray:
     grayscale = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     _, binary = cv2.threshold(grayscale, 1, 255, cv2.THRESH_BINARY_INV)

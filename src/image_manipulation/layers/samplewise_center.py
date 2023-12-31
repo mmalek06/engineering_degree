@@ -6,6 +6,7 @@ from tensorflow import keras
 from .floodfill_mask import generate_mask
 
 
+# noinspection PyTypeChecker
 class SamplewiseCenter(keras.layers.Layer):
     """
     This class centers each individual image around zero. It can help if there's
